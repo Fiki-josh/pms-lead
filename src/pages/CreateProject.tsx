@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FileUploader from '../components/FileUploader'
 import { Button } from '@/components/ui/button'
 import { IProject, imageType } from '@/types'
@@ -6,12 +6,15 @@ import { useCreateProject } from '@/lib/react-query/query&mutations'
 import { toast } from '@/components/ui/use-toast'
 import { Loader2 } from 'lucide-react'
 import { useGlobalContext } from '@/context/GlobalContext'
+import { useNavigate } from 'react-router-dom'
 
 const CreateProject = () => {
 
   const {user} = useGlobalContext()
   
   const [imgFiles, setImgFiles] = useState<Array<imageType>>([])
+
+  const [document, setDocument] = useState<File>()
 
   const [projectDetails, setProjectDetails] = useState<IProject>({
     title: "",
@@ -20,10 +23,25 @@ const CreateProject = () => {
     authorId: "",
   })
 
+  const navigate = useNavigate()
+
   const {
     mutateAsync: createProject,
-    isPending
+    isPending,
+    isError,
+    error, 
+    isSuccess
   } = useCreateProject()
+
+  useEffect(() => {
+    if(isError){
+      toast({
+        title: "Error",
+        description: error.message
+      })
+    }
+    if(isSuccess) navigate("/feed")
+  },[isError])
 
   async function handleSubmit(e: React.FormEvent){
     e.preventDefault()
@@ -35,7 +53,7 @@ const CreateProject = () => {
       })
     }
 
-    const data = {...projectDetails, authorId: user.id, imgFiles}
+    const data = {...projectDetails, authorId: user.id, imgFiles, document}
 
     const result = await createProject(data)
 
@@ -81,6 +99,23 @@ const CreateProject = () => {
         <div className='space-y-3'>
           <label htmlFor="appendix" className='text-md font-bold'>Project Images*</label><br />
           <FileUploader imgFiles={imgFiles} setImgFiles={setImgFiles} />
+        </div>
+        <div className='space-y-3'>
+          <label htmlFor="documentation" className='text-md font-bold'>Upload Documentation*</label><br />
+          <div>File should be a PDF</div>
+          <input 
+            type="file" 
+            required 
+            accept='.pdf' 
+            name='documentation' 
+            id='documentation' 
+            onChange = {(e) => {
+              if(!e.target.files) return;
+
+              console.log(e.target.files[0])
+              setDocument(e.target.files[0])
+            }}
+          />
         </div>
         <div className='flex gap-2 float-right'>
           <Button type='button' className='bg-slate-600'>Cancel</Button>

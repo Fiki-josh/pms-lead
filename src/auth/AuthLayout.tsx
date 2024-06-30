@@ -1,12 +1,17 @@
 import { useGlobalContext } from '@/context/GlobalContext'
+import { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
 const AuthLayout = () => {
-  const {user} = useGlobalContext()
+  const {isAuth} = useGlobalContext()
 
   const navigate = useNavigate()
 
-  if(user) navigate("/feed")
+  useEffect(() => {
+
+    if(isAuth) navigate("/feed")
+  },[isAuth])
+
   
   return (
     <div className='lg:flex min-h-screen justify-between'>

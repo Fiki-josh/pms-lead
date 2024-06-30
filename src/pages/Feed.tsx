@@ -44,13 +44,14 @@ const Feed = () => {
             return (
                 <div key={index} className="w-full space-y-8 lg:space-y-4 px-3">
                     <Project project={post} />
+                    <br />
                 </div>
             );
         })}
         {
           (!isPending && !isError && lastFetched?.data.length === 0) 
           && <p className="text-center flex gap-1">
-            No feed project uploaed yet. Be the first to share your project by clicking here
+            No feed project uploaded yet. Be the first to share your project by clicking here
             <Link to={"/create"} className = "underline text-blue-400">
                 create
             </Link>

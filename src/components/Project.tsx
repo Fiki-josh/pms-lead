@@ -6,6 +6,8 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Button } from './ui/button'
+import { Link } from 'react-router-dom'
 
 type IProps = {
     project: IReturedProject
@@ -39,6 +41,12 @@ const Project = ({project}: IProps) => {
                 }
         </Carousel>
         <p>{project?.description}</p>
+        {
+            project.document && 
+            <Link to={project?.document} target='_blank'>
+                <Button type='button' className='mt-3'>View documentation</Button>
+            </Link>
+        }
     </div>
   )
 }

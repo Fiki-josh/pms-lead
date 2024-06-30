@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useSignInUser } from '../lib/react-query/query&mutations'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import { toast } from '@/components/ui/use-toast'
 
 const SignIn = () => {
     const [data, setData] = useState<{email: string, password: string}>({
@@ -14,7 +15,18 @@ const SignIn = () => {
     const {
         mutateAsync: signInUser,
         isPending,
+        isError,
+        error
     } = useSignInUser()
+
+    useEffect(() => {
+        if(isError){
+            toast({
+                title: "Error",
+                description: error.message
+            })
+        }
+    },[isError])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -23,7 +35,7 @@ const SignIn = () => {
 
         if(!isUser) return alert("An error occurred please try again later")
 
-        return navigate("/feed")
+        if(isUser && !isError) return navigate("/feed")
     }
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import { INewUser, IProject, IReturn, ISignUser } from "../../types"
 import { auth, db, storage } from "./config"
 import { DocumentData, addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc } from "firebase/firestore"
@@ -82,6 +82,8 @@ export async function getCurrentUser(){
 export async function createProject(data: IProject){
     const projectsRef = collection(db, "projects")
 
+    if(!data.document) return alert("Missing Field")
+
     try {
         let imgFiles: string[] = [];
 
@@ -110,11 +112,22 @@ export async function createProject(data: IProject){
 
         await handlePromise
 
+        const storageRef = ref(storage, `documentation/${data.document.name}/${data.authorId}` + new Date())
+
+        const imgUrl = await uploadBytes(storageRef, data.document)
+
+        if(!imgUrl) throw new Error("Error uploading documentstion")
+        
+        const getUrl = await getDownloadURL(storageRef)
+
+        if(!getUrl) throw new Error("Error uploading documentstion")
+
         const uploadData = {
             title: data.title,
             authorId: data.authorId,
             description: data.description,
             imgFiles,
+            document: getUrl,
             timeStamp: new Date()
         }
 
@@ -174,6 +187,14 @@ export async function getProjects(
             pageParam + LIMIT 
             : null
         }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function SignUserOut(){
+    try {
+        await signOut(auth)
     } catch (error) {
         console.error(error)
     }

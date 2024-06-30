@@ -7,11 +7,11 @@ const RequireAuth = () => {
     const location = useLocation()
 
     const check = (
-        user
+        user.id
         ?
         <>
           <Navbar />
-          <div className=' pb-24' />
+          <div className=' pb-28' />
           <Outlet />
         </>
         :

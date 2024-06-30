@@ -27,6 +27,7 @@ export type IProject = {
     description: string;
     imgFiles: imageType[];
     authorId: string;
+    document?: File;
 }
 
 export type IReturedProject = {
@@ -36,6 +37,7 @@ export type IReturedProject = {
     imgFiles?: string[];
     timeStamp?: Date;
     description?: string;
+    document?: string
 }
 
 export type IReturn = {

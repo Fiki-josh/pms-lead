@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { createProject, createUserAccount, getProjects, signIntoAccount } from "../firebase/api";
+import { SignUserOut, createProject, createUserAccount, getProjects, signIntoAccount } from "../firebase/api";
 import { INewUser, IProject, ISignUser } from "../../types";
 
 export const useCreateUserAccount = () => {
@@ -26,5 +26,11 @@ export const useGetprojects = () => {
         queryFn: getProjects,
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage?.nextPage
+    })
+}
+
+export const useSignOut = () => {
+    return useMutation({
+        mutationFn: SignUserOut
     })
 }
